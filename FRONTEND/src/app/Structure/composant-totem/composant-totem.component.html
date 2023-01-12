@@ -1,0 +1,10 @@
+
+<mat-drawer-container>
+  <mat-card class="lien" [routerLink]="['/client','login']" color="primary">Login</mat-card>
+  <mat-card class="lien" [routerLink]="['/client','form']"  color="primary">Formulaire Client</mat-card>
+  <mat-card class="lien" [routerLink]="['/catalog','catalog']"  color="primary">Catalogue de fruits</mat-card>
+  
+  <mat-card [routerLink]="['/catalog','kart']">
+    <mat-icon matBadge="{{numberProduct$ | async}}" matBadgeColor="warn" class="material-symbols-outlined" fontIcon="shopping_cart"></mat-icon></mat-card>
+</mat-drawer-container>
+<router-outlet></router-outlet>
