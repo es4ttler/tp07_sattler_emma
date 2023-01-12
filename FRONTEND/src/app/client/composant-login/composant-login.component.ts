@@ -1,5 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Client } from 'src/app/core/models/Client';
 import { LoginService } from 'src/app/core/services/LoginService/login.service';
 
 @Component({
@@ -14,20 +16,59 @@ export class ComposantLoginComponent {
     password: new FormControl('')
   });
 
-  isConnected = false
+  @Output() user = new EventEmitter<Client>();
 
-  @Output() login = new EventEmitter<string>();
-  constructor(private loginService: LoginService) { }
+  isConnected = false
+  snackBar: MatSnackBar;
+
+  constructor(snackBar:MatSnackBar,private loginService: LoginService) { 
+    this.snackBar=snackBar;
+  }
 
   onSubmit() {
+
+    if (this.loginForm.invalid) {
+      if(this.loginForm.value.login.invalid) {
+        if(this.loginForm.value.login.errors?.['required']){
+          this.snackBar.open('L\'identifiant est requis',"",{
+            duration:3000
+          });
+        }
+        if(this.loginForm.value.password.errors?.['required']){
+          this.snackBar.open('Le mot de passe est requis',"",{
+            duration:3000,
+
+          });
+        }
+      }
+    }
+    else{
+      this.login()
+    }
+  }
+
+  login(){
     console.log('debut submit', this.loginForm.value.login, this.loginForm.value.password);
     this.loginService.login(this.loginForm.value.login, this.loginForm.value.password).subscribe(
       (data) => {
-        this.isConnected = true;
-        console.log('loginComponent onSubmit',data['login']);
-        this.login.emit(data['login']);
+        this.updateUser(data);
+      },
+      (error) => {
+        this.snackBar.open('Erreur lors de la connexion',"",{
+          duration:3000
+        });
       }
     );
+    this.responseLogin();
+  }
+
+  responseLogin() {
+    this.isConnected = true;
+    this.snackBar.open('Vous êtes connecté',"",{duration:3000});
+  }
+
+  updateUser($event: any) {
+    this.user.emit($event);
   }
 
 }

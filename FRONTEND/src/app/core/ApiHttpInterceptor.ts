@@ -1,5 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { Observable, of, tap } from "rxjs";
 
@@ -8,8 +9,11 @@ import { Observable, of, tap } from "rxjs";
 export class ApiHttpInterceptor implements HttpInterceptor {
 
     jwtToken: String = "";
+    snackBar: MatSnackBar;
 
-    constructor(private router:Router) { }
+    constructor(private router:Router, snackBar:MatSnackBar) { 
+        this.snackBar=snackBar;
+    }
 
     intercept(req: HttpRequest<any>, next: HttpHandler):
         Observable<HttpEvent<any>> {console.log("intercepted request ... ",req);
@@ -42,8 +46,8 @@ export class ApiHttpInterceptor implements HttpInterceptor {
             (error: HttpErrorResponse) => {
                 switch (error.status) {
                     case 400:
-                    case 401:this.router.navigate(["/"]);break;
-                    case 404:this.router.navigate(["/"]);break;
+                    case 401:this.router.navigate(["/"]);this.snackBar.open("Erreur 401 : "+error.message,"",{duration:3000});break;
+                    case 404:this.router.navigate(["/"]);this.snackBar.open("Erreur 404 : "+error.message,"",{duration:3000});break;
                 }
                 return of(null);
             }

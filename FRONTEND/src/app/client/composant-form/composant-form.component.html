@@ -1,4 +1,4 @@
-<form>
+<form  (ngSubmit)="verifyFormData()">
     <div>
         <mat-card>
             <mat-card-title>Identité</mat-card-title>
@@ -107,7 +107,7 @@
             </p>
         </mat-card>
     </div>
-    <button type="submit" (click)="verifyFormData()" mat-raised-button>Envoyer</button>
+    <button type="submit" mat-raised-button>Envoyer</button>
 </form>
 
 <div *ngIf="isValid" class="main-content">
